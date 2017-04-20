@@ -24,7 +24,7 @@ np.random.seed(2016)
 K.set_image_dim_ordering('tf')
 #define some run parameters
 batch_size      = 32
-nb_epochs       = 20
+nb_epochs       = 1
 examplesPer     = 60000
 maxToAdd        = 8
 hidden_units    = 200
@@ -105,25 +105,25 @@ for ep in range(0,nb_epochs):
               verbose=1)
 
 #Test the model
-#X_test     = np.zeros((examplesPer,maxToAdd,1,size,size))
-#for i in range(0,examplesPer):
-#    output      = np.zeros((maxToAdd,1,size,size))
-#    numToAdd    = np.ceil(np.random.rand()*maxToAdd)
-#    indices     = np.random.choice(X_test_raw.shape[0],size=numToAdd)
-#    example     = X_test_raw[indices]
-#    exampleY    = y_test_temp[indices]
-#    output[0:numToAdd,0,:,:] = example
-#    X_test[i,:,:,:,:] = output
-#    y_test.append(np.sum(exampleY))
-#
-#X_test  = np.array(X_test)
-#y_test  = np.array(y_test)       
-#
-#preds   = model.predict(X_test)
-#
-##print the results of the test    
-#print(np.sum(np.sqrt(np.mean([ (y_test[i] - preds[i][0])**2 for i in range(0,len(preds)) ]))))
-#print("naive guess", np.sum(np.sqrt(np.mean([ (y_test[i] - np.mean(y_test))**2 for i in range(0,len(y_test)) ]))))
+X_test     = np.zeros((examplesPer,maxToAdd,size,size,1))
+for i in range(0,examplesPer):
+    output      = np.zeros((maxToAdd,size,size,1))
+    numToAdd    = int(np.ceil(np.random.rand()*maxToAdd))
+    indices     = np.random.choice(X_test_raw.shape[0],size=numToAdd)
+    example     = X_test_raw[indices]
+    exampleY    = y_test_temp[indices]
+    output[0:numToAdd,:,:,0] = example
+    X_test[i,:,:,:,:] = output
+    y_test.append(np.sum(exampleY))
+
+X_test  = np.array(X_test)
+y_test  = np.array(y_test)       
+
+preds   = model.predict(X_test)
+
+#print the results of the test    
+print(np.sum(np.sqrt(np.mean([ (y_test[i] - preds[i][0])**2 for i in range(0,len(preds)) ]))))
+print("naive guess", np.sum(np.sqrt(np.mean([ (y_test[i] - np.mean(y_test))**2 for i in range(0,len(y_test)) ]))))
 
 #save the model
 #jsonstring  = model.to_json()
